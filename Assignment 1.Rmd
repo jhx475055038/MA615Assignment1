@@ -1,0 +1,77 @@
+---
+title: "Assignment 1"
+author: "Jiahao Xu"
+date: "September 12, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Document assignment
+
+Consider the following situation:  
+
+A sloppy printer produces books with an average of 2 misprints per page. You want to
+know how many pages have more than k misprints in a book of n pages. Make an n x k table that shows the relationship between the total number of pages in a book and the number of pages with k misprints.
+
+Show and explain your work.  Include equations and calculations to teach the reader how to solve the problem.  Include an image of a book.
+
+Push your solution to a github repository and submit the url for repository on blackboard.
+
+Be sure your repo includes your document as a pdf file and as an RMD file.  Include other files needed to recompile your document.
+
+
+---
+title: "MA675 HW1"
+author: "Jiahao Xu"
+output: pdf_document
+---
+![a book.](book.jpg)
+
+Instruction for this assignment:
+1.From the first two sentences of these questions, we can know that each page with more than k misprints is under a poison distribution that $Poisson(\lambda = 2)$ 
+2.Then the probability p_k of more than k misprints on a page is $p_k = P(M > k) = 1 - P(M \leq k) =$ 1 - ppois($k$, lambda = 2).  
+3.Then we have 50 pages in binomial distribution with p_k, calculated above. 
+4.Finally, we output the n by k table with probability of T no more than n pages with more than k misprints:$P(T \leq n) =$ pbinom($n$, 50, $p_k$). 
+
+
+
+##{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(echo = TRUE)
+
+
+##
+
+```{r }
+library(knitr)
+library(httr)
+library(numbers)
+
+
+set.seed(2018)
+# set max num of page
+n=50  
+# max num of misprints
+k=8
+# set up a initial matrix to store the value
+resultTable<- matrix(0, nrow=n+1, ncol=k+2)
+
+# use two for loops to build the matrix
+for (i in 0:n){ 
+  # build the first column of table from 1 to n 
+   resultTable[i+1,1]=i
+  for(j in 0:k){
+    # set up poisson distribution for misprints>k with different n page number
+    book<- 1-ppois(j,2)
+    # set up binomial distribution for each page number in all pages
+    resultTable[i+1,j+2]<- pbinom(i,size=50,book )
+  }
+}
+ tab1 = as.data.frame(resultTable)
+ #set the column of the table
+ colnames(tab1) <- c("n", "k=0", "k=1","k=2","k=3","k=4","k=5","k=6","k=7","k=8")
+  kable(tab1)
+```
